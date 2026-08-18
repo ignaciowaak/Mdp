@@ -2,828 +2,922 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Clon Naranja X - Actividad Completa con Imágenes Reales</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Demo de reconocimiento</title>
+
     <style>
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        :root {
-            --nx-purple-dark: #3F0B66;
-            --nx-purple-soft: #713498;
-            --nx-purple-circle: #F5EBFB;
-            --nx-orange: #FF5A26;
-            --nx-orange-badge: #DD3B14;
-            --nx-green-text: #008744;
-            --nx-green-bg: #E8F7ED;
-            --bg-app: #F8F8FA;
-            --text-main: #1C1C1E;
-            --text-muted: #6E6E73;
-            --border-light: #EBEBEB;
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Helvetica,
+                Arial,
+                sans-serif;
         }
 
         body {
-            background-color: #121212;
+            min-height: 100vh;
+            background: #ffffff;
+
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            height: 100dvh; 
-            overflow: hidden;
         }
 
         .app-container {
             width: 100%;
-            max-width: 390px;
-            height: 100%;
-            max-height: 844px;
-            background-color: var(--bg-app);
-            position: relative;
-            overflow: hidden;
-            border-radius: px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-width: 410px;
+            min-height: 100vh;
+
+            padding: 40px 28px 24px;
+
             display: flex;
             flex-direction: column;
         }
 
-        .screen {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .header-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+
+            margin-bottom: 24px;
+        }
+
+        .avatar {
+            width: 58px;
+            height: 58px;
+
+            border-radius: 50%;
+            overflow: hidden;
+
+            background: #ff8c00;
+
+            flex-shrink: 0;
+        }
+
+        .avatar svg {
             width: 100%;
             height: 100%;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 110px;
-            background-color: var(--bg-app);
-            display: none;
-            z-index: 1;
-            scrollbar-width: none;
         }
-        .screen::-webkit-scrollbar { display: none; }
-        .screen.active { display: block; }
 
-        /* --- HOME STYLES --- */
-        .bg-glow { position: absolute; top: 60px; left: 0; width: 100%; height: 180px; pointer-events: none; z-index: 0; overflow: hidden; }
-        .glow-orange { position: absolute; top: 30px; left: -20px; width: 70px; height: 120px; background: #FF6231; filter: blur(30px); opacity: 0.5; border-radius: 50%; }
-        .glow-purple { position: absolute; top: 30px; right: 30px; width: 90px; height: 120px; background: #A855F7; filter: blur(35px); opacity: 0.25; border-radius: 50%; }
-        
-        .header-home { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px 6px; background: var(--bg-app); position: relative; z-index: 2; }
-        .user-greeting { display: flex; align-items: center; gap: 10px; }
-        .nx-box { width: 34px; height: 34px; background: #ffffff; border: 1px solid var(--border-light); border-radius: 9px; display: flex; justify-content: center; align-items: center; font-weight: 900; color: var(--nx-orange); font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .greeting-text { font-size: 12px; color: var(--text-main); line-height: 1.2; font-weight: 500; }
-        .header-actions { display: flex; align-items: center; gap: 14px; }
-        .btn-help { background-color: var(--nx-purple-circle); color: var(--nx-purple-dark); border: none; padding: 6px 12px; border-radius: 18px; font-weight: 700; display: flex; align-items: center; gap: 5px; font-size: 11px; cursor: pointer; }
-        
-        .cards-carousel { display: flex; padding: 8px 16px 14px; gap: 10px; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x mandatory; position: relative; z-index: 2; }
-        .cards-carousel::-webkit-scrollbar { display: none; }
-        .account-card { min-width: 280px; background: #ffffff; border-radius: 18px; padding: 14px 16px 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.025); border: 1px solid #F0F0F2; scroll-snap-align: start; }
-        .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .card-title-group { display: flex; align-items: center; gap: 8px; }
-        .card-title { font-size: 14px; font-weight: 700; color: var(--text-main); }
-        .pill-green { background-color: var(--nx-green-bg); color: var(--nx-green-text); padding: 2px 6px; border-radius: 10px; font-size: 10px; font-weight: 800; }
-        .balance-container { font-size: 30px; font-weight: 800; color: var(--text-main); display: flex; align-items: flex-start; gap: 5px; margin-bottom: 18px; letter-spacing: -0.6px; }
-        .balance-sign { font-size: 15px; margin-top: 5px; font-weight: 600; }
-        .balance-cents { font-size: 15px; margin-top: 3px; font-weight: 700; }
-        .balance-eye { font-size: 15px; color: var(--nx-purple-dark); margin-top: 7px; margin-left: 4px; cursor: pointer; }
-        
-        .card-actions { display: flex; justify-content: space-between; padding: 0 2px; }
-        .action-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
-        .action-circle { width: 44px; height: 44px; background-color: var(--nx-purple-circle); color: var(--nx-purple-soft); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 16px; }
-        .action-item span { font-size: 11px; font-weight: 500; color: var(--text-main); }
+        .greeting {
+            font-size: 26px;
+            font-weight: 700;
+        }
 
-        .section-header { display: flex; justify-content: space-between; align-items: center; padding: 2px 16px 10px; position: relative; z-index: 2; }
-        .section-title { font-size: 14px; font-weight: 700; color: var(--text-main); }
-        .section-link { color: var(--nx-purple-dark); font-size: 11px; text-decoration: none; font-weight: 700; }
-        
-        .shortcuts-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px 0px; padding: 0 12px; }
-        .shortcut-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
-        .shortcut-box { width: 64px; height: 64px; background: #ffffff; border: 1px solid var(--border-light); border-radius: 18px; display: flex; justify-content: center; align-items: center; position: relative; box-shadow: 0 2px 6px rgba(0,0,0,0.01); }
-        .shortcut-inner-circle { width: 38px; height: 38px; background: var(--nx-purple-circle); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--nx-purple-soft); font-size: 16px; }
-        .badge-tag { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); background: var(--nx-orange-badge); color: white; font-size: 9px; padding: 1px 6px; border-radius: 8px; font-weight: 800; border: 2px solid #fff; white-space: nowrap; z-index: 2; }
-        .shortcut-item span { font-size: 10px; color: var(--text-muted); font-weight: 500; }
+        .subtitle {
+            font-size: 16px;
+            margin-bottom: 36px;
+        }
 
-        .promo-container { padding: 0 16px 8px; }
-        .promo-card { width: 100%; background: linear-gradient(135deg, #FFF2E8 0%, #FFE2D1 100%); border-radius: 14px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
-        .promo-subtitle { color: #C04A22; font-size: 10px; font-weight: 700; margin-bottom: 2px; }
-        .promo-title { color: var(--nx-purple-dark); font-size: 20px; font-weight: 900; letter-spacing: -0.4px; margin-bottom: 2px; }
-        .promo-desc { color: var(--text-main); font-size: 10px; font-weight: 500; }
-        .promo-icon-group { position: relative; display: flex; flex-direction: column; align-items: center; margin-right: 2px; }
-        .promo-icon-bg { width: 48px; height: 48px; background: #ffffff; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 3px 8px rgba(0,0,0,0.05); }
-        .promo-icon-bg i { color: var(--nx-purple-dark); font-size: 20px; }
-        .promo-pill { position: absolute; bottom: -6px; background: var(--nx-orange-badge); color: #fff; font-size: 8px; font-weight: 800; padding: 2px 6px; border-radius: 8px; white-space: nowrap; }
+        .pin-indicators {
+            width: 100%;
 
-        .novedades-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px 0; margin-bottom: 10px; }
-        .btn-novedades { width: 42px; height: 42px; background: #ffffff; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 3px 10px rgba(0,0,0,0.05); color: var(--nx-purple-dark); font-size: 18px; border: 1px solid var(--border-light); cursor: pointer; }
+            display: flex;
+            justify-content: space-between;
 
-        /* --- ACTIVIDAD STYLES --- */
-        #screen-actividad { background-color: #ffffff; }
-        .header-act { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: #ffffff; border-bottom: 1px solid var(--border-light); position: sticky; top: 0; z-index: 10; }
-        .header-act-left { display: flex; align-items: center; gap: 14px; }
-        .header-act-left i { font-size: 18px; color: var(--nx-purple-dark); cursor: pointer; }
-        .header-act-left h1 { font-size: 16px; font-weight: 600; color: var(--text-main); }
-        .header-act-right i { font-size: 18px; color: var(--nx-purple-soft); cursor: pointer; }
-        .historial-title { font-size: 14px; font-weight: 700; color: var(--text-main); padding: 16px 16px 8px; }
-        
-        .tx-list { display: flex; flex-direction: column; padding-bottom: 30px; }
-        .tx-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border-light); cursor: pointer; transition: background 0.2s; }
-        .tx-item:active { background: #f9f9f9; }
-        .tx-left { display: flex; align-items: center; gap: 12px; }
+            padding: 0 10px;
 
-        /* Contenedor del logo real (imagen o icono personalizado por HTML) */
-        .bank-logo-box { width: 40px; height: 40px; border-radius: 10px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; overflow: hidden; background: #f0f0f2; border: 1px solid var(--border-light); }
-        .bank-logo-box img { width: 100%; height: 100%; object-fit: cover; }
+            margin-bottom: 35px;
+        }
 
-        .tx-info { display: flex; flex-direction: column; gap: 1px; }
-        .tx-date { font-size: 10px; color: var(--text-muted); font-weight: 500; }
-        .tx-name { font-size: 13px; font-weight: 700; color: var(--text-main); }
-        .tx-dest { font-size: 12px; color: var(--text-muted); font-weight: 500; }
-        .tx-right { display: flex; align-items: center; gap: 12px; }
-        .tx-amount-col { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
-        .tx-amount { font-size: 14px; font-weight: 700; color: var(--text-main); }
-        .tx-status { font-size: 10px; color: var(--nx-green-text); font-weight: 600; }
-        .tx-arrow { color: var(--nx-purple-dark); font-size: 12px; }
+        .pin-line {
+            width: 36px;
+            height: 2px;
 
-        .fab-up { position: fixed; bottom: 85px; right: 16px; width: 44px; height: 44px; background: #ffffff; border-radius: 14px; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); color: var(--nx-purple-dark); font-size: 18px; z-index: 10; cursor: pointer; }
+            background: #111111;
 
-        /* --- BOTTOM SHEET (DETALLE NORMAL) --- */
-        .bottom-sheet-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 100; display: none; opacity: 0; transition: opacity 0.3s ease; }
-        .bottom-sheet { position: absolute; bottom: 0; left: 0; width: 100%; background: #ffffff; border-radius: 22px 22px 0 0; padding: 10px 18px 24px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); z-index: 101; display: flex; flex-direction: column; max-height: 88vh; overflow-y: auto; }
-        .bs-handle { width: 36px; height: 4px; background: #E0E0E0; border-radius: 4px; margin: 0 auto 16px; }
-        .bs-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2px; }
-        .bs-title { font-size: 12px; color: var(--text-muted); font-weight: 500; }
-        .bs-close { color: var(--nx-purple-dark); font-size: 18px; cursor: pointer; }
-        
-        .bs-amount-container { margin-bottom: 2px; }
-        .bs-amount-container .sign { font-size: 15px; font-weight: 700; color: var(--text-main); margin-right: 2px; }
-        .bs-amount-container .amount { font-size: 36px; font-weight: 800; color: var(--text-main); letter-spacing: -0.8px; }
+            border-radius: 10px;
+        }
 
-        .bs-datetime { font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 18px; font-weight: 500; }
+        .recovery-link {
+            width: 100%;
 
-        .bs-dest-card { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-        .bs-dest-icon { width: 36px; height: 36px; background: #f0f0f2; border-radius: 9px; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-        .bs-dest-icon img { width: 100%; height: 100%; object-fit: cover; }
-        .bs-dest-info { display: flex; flex-direction: column; }
-        .bs-dest-name { font-size: 13px; font-weight: 700; color: var(--text-main); }
-        .bs-dest-cbu { font-size: 11px; color: var(--text-muted); }
+            text-align: center;
 
-        .bs-id-container { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 18px; }
-        .bs-id-left { display: flex; flex-direction: column; gap: 3px; }
-        .bs-id-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
-        .bs-id-value { font-size: 12px; color: var(--text-muted); font-weight: 500; }
-        .bs-copy { color: var(--nx-purple-dark); font-size: 18px; cursor: pointer; }
+            color: #6a1b9a;
 
-        .bs-btn-primary { width: 100%; background: var(--nx-purple-dark); color: #ffffff; font-size: 14px; font-weight: 700; padding: 14px; border-radius: 12px; border: none; margin-bottom: 10px; cursor: pointer; }
-        .bs-btn-secondary { width: 100%; background: transparent; color: var(--nx-purple-dark); font-size: 14px; font-weight: 700; padding: 14px; border-radius: 12px; border: none; cursor: pointer; }
+            text-decoration: none;
 
-        /* --- NUEVA VISTA DE COMPROBANTE --- */
-        #screen-comprobante { background-color: #ffffff; z-index: 200; }
-        .receipt-image-container { padding: 20px 16px; text-align: center; }
-        .receipt-image-container img { width: 100%; max-width: 340px; height: auto; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+            font-size: 15px;
+            font-weight: 600;
 
-        /* --- NAVEGACIÓN INFERIOR --- */
-        .bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; height: 70px; background: #ffffff; display: flex; justify-content: space-around; align-items: flex-start; padding-top: 10px; border-radius: 18px 18px 0 0; box-shadow: 0 -4px 16px rgba(0,0,0,0.03); z-index: 20; }
-        .nav-link { display: flex; flex-direction: column; align-items: center; gap: 3px; color: #8E8E93; font-size: 9px; font-weight: 600; text-decoration: none; width: 55px; cursor: pointer; }
-        .nav-link.active { color: var(--nx-purple-dark); }
-        .nav-link i { font-size: 18px; }
-        .nav-qr-btn { width: 54px; height: 54px; background: var(--nx-purple-dark); color: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; margin-top: -26px; box-shadow: 0 5px 14px rgba(63, 11, 102, 0.25); border: 4px solid var(--bg-app); cursor: pointer; }
+            margin-bottom: 40px;
+        }
+
+        .face-id-btn {
+            width: 100%;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            gap: 10px;
+
+            padding: 10px;
+
+            border: 0;
+            background: transparent;
+
+            color: #6a1b9a;
+
+            font-size: 15px;
+            font-weight: 600;
+
+            cursor: pointer;
+        }
+
+        .face-id-btn svg {
+            width: 22px;
+            height: 22px;
+
+            fill: #6a1b9a;
+        }
+
+
+        /* =========================================
+           OVERLAY
+        ========================================= */
+
+        .face-modal-overlay {
+            position: fixed;
+
+            inset: 0;
+
+            background: rgba(0, 0, 0, .45);
+
+            display: flex;
+
+            justify-content: center;
+            align-items: flex-start;
+
+            padding-top: 130px;
+
+            opacity: 0;
+            visibility: hidden;
+
+            transition:
+                opacity .25s ease,
+                visibility .25s ease;
+
+            z-index: 1000;
+        }
+
+        .face-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+
+        /* =========================================
+           CONTENEDOR
+        ========================================= */
+
+        .canvas {
+            width: 100px;
+            height: 100px;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+        }
+
+
+        .face-id-wrapper {
+            position: relative;
+
+            width: 80px;
+            height: 80px;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            opacity: 0;
+
+            transform: scale(.8);
+
+            transition:
+                opacity .25s ease,
+                transform .35s
+                cubic-bezier(
+                    .175,
+                    .885,
+                    .32,
+                    1.275
+                );
+        }
+
+        .face-modal-overlay.active
+        .face-id-wrapper {
+            opacity: 1;
+
+            transform: scale(1);
+        }
+
+
+        /* =========================================
+           CARA
+        ========================================= */
+
+        .face-id-default {
+            position: absolute;
+
+            width: 30px;
+            height: 30px;
+
+            z-index: 5;
+
+            stroke: #ffffff;
+
+            pointer-events: none;
+        }
+
+
+        /* =========================================
+           ANILLOS
+        ========================================= */
+
+        .circle {
+            position: absolute;
+
+            width: 70px;
+            height: 70px;
+
+            border-radius: 50%;
+
+            border: 3px solid #00e676;
+
+            opacity: 0;
+
+            pointer-events: none;
+        }
+
+        .face-id-wrapper.active
+        .circle {
+            opacity: 1;
+        }
+
+
+        .circle.green,
+        .circle.blue,
+        .circle.purple {
+            border-color: #00e676;
+        }
+
+
+        /* =========================================
+           FASE 1 — GIRO FLUIDO MEJORADO
+        ========================================= */
+
+        .face-id-wrapper.active {
+            animation:
+                faceScanSmooth 2.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes faceScanSmooth {
+            0% {
+                transform: scale(1) rotate(0deg);
+            }
+            25% {
+                transform: scale(1) rotate(90deg);
+            }
+            50% {
+                transform: scale(1) rotate(210deg);
+            }
+            75% {
+                transform: scale(1) rotate(420deg);
+            }
+            90% {
+                transform: scale(1.04) rotate(600deg);
+            }
+            100% {
+                transform: scale(1) rotate(720deg);
+            }
+        }
+
+
+        /* =========================================
+           EFECTO DE LUZ
+        ========================================= */
+
+        .face-id-wrapper.active::after {
+            content: "";
+
+            position: absolute;
+
+            width: 76px;
+            height: 76px;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(0, 230, 118, .18),
+                    transparent 70%
+                );
+
+            animation:
+                scanGlow 1s ease-in-out infinite;
+
+            pointer-events: none;
+        }
+
+        @keyframes scanGlow {
+
+            0% {
+                opacity: .2;
+                transform: scale(.85);
+            }
+
+            50% {
+                opacity: .9;
+                transform: scale(1.12);
+            }
+
+            100% {
+                opacity: .2;
+                transform: scale(.85);
+            }
+        }
+
+
+        /* =========================================
+           FINAL
+        ========================================= */
+
+        .face-id-wrapper.completed {
+            animation:
+                completePulse .35s ease-out forwards;
+        }
+
+        @keyframes completePulse {
+
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+
+        .face-id-wrapper.completed .circle {
+            opacity: 1;
+
+            border-color: #00e676;
+
+            transform: scale(1.03);
+        }
+
+
+        /* =========================================
+           CHECK
+        ========================================= */
+
+        .face-id-check {
+            position: absolute;
+
+            width: 62px;
+            height: 62px;
+
+            z-index: 20;
+
+            pointer-events: none;
+        }
+
+        .path-tick {
+            opacity: 0;
+
+            stroke-dasharray:
+                49.497474670410156;
+
+            stroke-dashoffset:
+                49.497474670410156;
+        }
+
+        .face-id-wrapper.completed
+        .path-tick {
+            opacity: 1;
+
+            animation:
+                drawCheck .55s
+                cubic-bezier(
+                    .65,
+                    0,
+                    .35,
+                    1
+                )
+                forwards;
+        }
+
+        @keyframes drawCheck {
+
+            0% {
+                stroke-dashoffset:
+                    49.497474670410156;
+            }
+
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
     </style>
 </head>
+
 <body>
+
 
     <div class="app-container">
 
-        <!-- ==================== PANTALLA INICIO ==================== -->
-        <div id="screen-home" class="screen active">
-            <div class="bg-glow">
-                <div class="glow-orange"></div>
-                <div class="glow-purple"></div>
-            </div>
-            <header class="header-home">
-                <div class="user-greeting">
-                    <div class="nx-box">NX</div>
-                    <div class="greeting-text">Nos encanta verte,<br><b>Juan</b></div>
-                </div>
-                <div class="header-actions">
-                    <i class="fa-regular fa-bell" style="color: var(--nx-purple-dark); font-size: 18px; cursor: pointer;"></i>
-                    <button class="btn-help">
-                        <i class="fa-regular fa-circle-question" style="font-size: 14px;"></i> Ayuda
-                    </button>
-                </div>
-            </header>
-            
-            <div class="cards-carousel">
-                <div class="account-card">
-                    <div class="card-top">
-                        <div class="card-title-group">
-                            <span class="card-title">Cuenta en pesos</span>
-                            <span class="pill-green">+18%</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-right" style="color: var(--nx-purple-dark); font-size: 12px;"></i>
-                    </div>
-                    <div class="balance-container">
-                        <span class="balance-sign">$</span> <span id="balance-amount">1.174.064</span> <span class="balance-cents">35</span>
-                        <i class="fa-regular fa-eye balance-eye" onclick="toggleBalance()"></i>
-                    </div>
-                    <div class="card-actions">
-                        <div class="action-item"><div class="action-circle"><i class="fa-solid fa-arrow-up"></i></div><span>Agregar</span></div>
-                        <div class="action-item" onclick="switchTab('actividad')"><div class="action-circle"><i class="fa-solid fa-arrow-right-arrow-left"></i></div><span>Transferir</span></div>
-                        <div class="action-item"><div class="action-circle"><i class="fa-solid fa-list"></i></div><span>Alias y CBU</span></div>
-                    </div>
-                </div>
-                <div class="account-card">
-                    <div class="card-top">
-                        <div class="card-title-group"><span class="card-title">Cuenta en dólares</span></div>
-                        <i class="fa-solid fa-chevron-right" style="color: var(--nx-purple-dark); font-size: 12px;"></i>
-                    </div>
-                    <div class="balance-container">
-                        <span class="balance-sign" style="font-size: 16px; margin-top: 4px;">USD</span> 0 <span class="balance-cents" style="margin-left: 2px;">00</span>
-                        <i class="fa-regular fa-eye balance-eye"></i>
-                    </div>
-                    <div class="card-actions" style="justify-content: flex-start;">
-                        <div class="action-item"><div class="action-circle"><span style="font-size: 14px; font-weight: 800;">U$D</span></div><span>Cambiar</span></div>
-                    </div>
-                </div>
+        <div class="header-section">
+
+            <div class="avatar">
+
+                <svg viewBox="0 0 100 100">
+
+                    <circle
+                        cx="50"
+                        cy="50"
+                        r="50"
+                        fill="#ff8c00"
+                    />
+
+                    <path
+                        d="M22,28 L10,10 L34,20 Z"
+                        fill="#e65100"
+                    />
+
+                    <path
+                        d="M78,28 L90,10 L66,20 Z"
+                        fill="#e65100"
+                    />
+
+                    <path
+                        d="
+                            M50,14 L50,30
+                            M38,18 L44,28
+                            M62,18 L56,28
+                        "
+                        stroke="#261200"
+                        stroke-width="4.5"
+                        stroke-linecap="round"
+                    />
+
+                    <circle
+                        cx="34"
+                        cy="45"
+                        r="6"
+                        fill="#261200"
+                    />
+
+                    <circle
+                        cx="66"
+                        cy="45"
+                        r="6"
+                        fill="#261200"
+                    />
+
+                    <circle
+                        cx="36"
+                        cy="43"
+                        r="2"
+                        fill="#fff"
+                    />
+
+                    <circle
+                        cx="68"
+                        cy="43"
+                        r="2"
+                        fill="#fff"
+                    />
+
+                    <polygon
+                        points="50,55 43,64 57,64"
+                        fill="#261200"
+                    />
+
+                    <path
+                        d="
+                            M50,64 L50,73
+                            M50,73
+                            C45,73 43,69 40,69
+                            M50,73
+                            C55,73 57,69 60,69
+                        "
+                        stroke="#261200"
+                        stroke-width="3"
+                        fill="none"
+                        stroke-linecap="round"
+                    />
+
+                </svg>
+
             </div>
 
-            <div class="section-header">
-                <span class="section-title">Tus atajos</span>
-                <a href="#" class="section-link">Conocer más</a>
-            </div>
+            <h1 class="greeting">
+                Hola
+            </h1>
 
-            <div class="shortcuts-grid">
-                <div class="shortcut-item"><div class="shortcut-box"><div class="shortcut-inner-circle"><i class="fa-solid fa-hand-holding-dollar"></i></div></div><span>Préstamos</span></div>
-                <div class="shortcut-item"><div class="shortcut-box"><span class="badge-tag">19%</span><div class="shortcut-inner-circle"><i class="fa-solid fa-jar"></i></div></div><span>Frascos</span></div>
-                <div class="shortcut-item"><div class="shortcut-box"><div class="shortcut-inner-circle"><span style="font-size: 13px; font-weight: 800;">U$D</span></div></div><span>Dólares</span></div>
-                <div class="shortcut-item"><div class="shortcut-box"><div class="shortcut-inner-circle"><i class="fa-solid fa-file-invoice-dollar"></i></div></div><span>Cobrar</span></div>
-                <div class="shortcut-item"><div class="shortcut-box"><div class="shortcut-inner-circle"><i class="fa-solid fa-file-invoice"></i></div></div><span>Servicios</span></div>
-                <div class="shortcut-item"><div class="shortcut-box"><div class="shortcut-inner-circle"><i class="fa-solid fa-bolt"></i></div></div><span>Recargas</span></div>
-                <div class="shortcut-item"><div class="shortcut-box"><div class="shortcut-inner-circle"><i class="fa-solid fa-shield-halved"></i></div></div><span>Seguros</span></div>
-                <div class="shortcut-item"><div class="shortcut-box"><div class="shortcut-inner-circle"><i class="fa-solid fa-box-open"></i></div></div><span>Donar</span></div>
-            </div>
-
-            <div class="section-header" style="padding-top: 14px;"><span class="section-title">Promos especiales</span></div>
-            <div class="promo-container">
-                <div class="promo-card">
-                    <div>
-                        <div class="promo-subtitle">Llená el changuito los martes</div>
-                        <div class="promo-title">SÚPER PROMO</div>
-                        <div class="promo-desc">Reintegros todas las semanas.</div>
-                    </div>
-                    <div class="promo-icon-group">
-                        <div class="promo-icon-bg"><i class="fa-solid fa-cart-shopping"></i></div>
-                        <div class="promo-pill">Planes NX</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="novedades-header">
-                <span class="section-title">Novedades para vos</span>
-                <div class="btn-novedades"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-            </div>
-            <div style="padding: 0 16px 16px;"><div style="width: 100%; height: 110px; background: #e0e0e0; border-radius: 14px;"></div></div>
         </div>
 
-        <!-- ==================== PANTALLA ACTIVIDAD (CON TODAS LAS TRANSFERENCIAS Y LOGOS REALES) ==================== -->
-        <div id="screen-actividad" class="screen">
-            <div class="header-act">
-                <div class="header-act-left">
-                    <i class="fa-solid fa-arrow-left" onclick="switchTab('home')"></i>
-                    <h1>Actividad</h1>
-                </div>
-                <div class="header-act-right">
-                    <i class="fa-regular fa-circle-question"></i>
-                </div>
-            </div>
 
-            <div class="historial-title">Historial</div>
-
-            <div class="tx-list">
-                
-                <!-- TRANSFERENCIA 1 -->
-                <div class="tx-item" onclick="openBottomSheet('Juan Ignacio Rodriguez', '$ 1', '17 de agosto', 'Banco Galicia', 'CBU 0070114930004171046118', 'img/comprobante1.jpg')">
-                    <div class="tx-left">
-                        <div class="bank-logo-box">
-                            <img src="gali.jpeg" alt="Galicia">
-                        </div>
-                        <div class="tx-info">
-                            <span class="tx-date">17 de agosto</span>
-                            <span class="tx-name">Juan Ignacio Rodriguez</span>
-                            <span class="tx-dest">A Banco Galicia</span>
-                        </div>
-                    </div>
-                    <div class="tx-right">
-                        <div class="tx-amount-col">
-                            <span class="tx-amount">$ 1</span>
-                            <span class="tx-status">Enviada</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-right tx-arrow"></i>
-                    </div>
-                </div>
-
-                <!-- TRANSFERENCIA 2 -->
-                <div class="tx-item" onclick="openBottomSheet('Juan Ignacio Rodriguez', '$ 20.000', '17 de agosto', 'Lemon Cash', 'CVU 000000310000...', 'img/comprobante2.jpg')">
-                    <div class="tx-left">
-                        <div class="bank-logo-box">
-                            <img src="lemon.jpeg" alt="Lemon">
-                        </div>
-                        <div class="tx-info">
-                            <span class="tx-date">17 de agosto</span>
-                            <span class="tx-name">Juan Ignacio Rodriguez</span>
-                            <span class="tx-dest">A Lemon Cash</span>
-                        </div>
-                    </div>
-                    <div class="tx-right">
-                        <div class="tx-amount-col">
-                            <span class="tx-amount">$ 20.000</span>
-                            <span class="tx-status">Enviada</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-right tx-arrow"></i>
-                    </div>
-                </div>
-
-                <!-- TRANSFERENCIA 3 -->
-                <div class="tx-item" onclick="openBottomSheet('Juan Ignacio Rodriguez', '$ 100', '17 de agosto', 'Lemon Cash', 'CVU 000000310000...', 'img/comprobante3.jpg')">
-                    <div class="tx-left">
-                        <div class="bank-logo-box">
-                            <img src="lemon.jpeg" alt="Lemon">
-                        </div>
-                        <div class="tx-info">
-                            <span class="tx-date">17 de agosto</span>
-                            <span class="tx-name">Juan Ignacio Rodriguez</span>
-                            <span class="tx-dest">A Lemon Cash</span>
-                        </div>
-                    </div>
-                    <div class="tx-right">
-                        <div class="tx-amount-col">
-                            <span class="tx-amount">$ 100</span>
-                            <span class="tx-status">Enviada</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-right tx-arrow"></i>
-                    </div>
-                </div>
-
-                <!-- TRANSFERENCIA 4 -->
-                <div class="tx-item" onclick="openBottomSheet('Juan Pedro Barrios', '$ 3.000', '16 de agosto', 'Mercado Pago', 'CVU 000000000000...', 'img/comprobante4.jpg')">
-                    <div class="tx-left">
-                        <div class="bank-logo-box">
-                            <img src="mp.jpeg" alt="Mercado Pago">
-                        </div>
-                        <div class="tx-info">
-                            <span class="tx-date">16 de agosto</span>
-                            <span class="tx-name">Juan Pedro Barrios</span>
-                            <span class="tx-dest">A Mercado Pago</span>
-                        </div>
-                    </div>
-                    <div class="tx-right">
-                        <div class="tx-amount-col">
-                            <span class="tx-amount">$ 3.000</span>
-                            <span class="tx-status">Enviada</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-right tx-arrow"></i>
-                    </div>
-                </div>
-
-                <!-- TRANSFERENCIA 5 -->
-                <div class="tx-item" onclick="openBottomSheet('Francisco Victor Arcuri', '$ 20.000', '15 de agosto', 'Mercado Pago', 'CVU 000000000000...', 'img/comprobante5.jpg')">
-                    <div class="tx-left">
-                        <div class="bank-logo-box">
-                            <img src="mp.jpeg" alt="Mercado Pago">
-                        </div>
-                        <div class="tx-info">
-                            <span class="tx-date">15 de agosto</span>
-                            <span class="tx-name">Francisco Victor Arcuri</span>
-                            <span class="tx-dest">A Mercado Pago</span>
-                        </div>
-                    </div>
-                    <div class="tx-right">
-                        <div class="tx-amount-col">
-                            <span class="tx-amount">$ 20.000</span>
-                            <span class="tx-status">Enviada</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-right tx-arrow"></i>
-                    </div>
-                </div>
-
-                <!-- TRANSFERENCIA 6 -->
-                <div class="tx-item" onclick="openBottomSheet('Dario Ezequiel Roveretti', '$ 15.000', '14 de agosto', 'Mercado Pago', 'CVU 000000000000...', 'img/comprobante6.jpg')">
-                    <div class="tx-left">
-                        <div class="bank-logo-box">
-                            <img src="mp.jpeg" alt="Mercado Pago">
-                        </div>
-                        <div class="tx-info">
-                            <span class="tx-date">14 de agosto</span>
-                            <span class="tx-name">Dario Ezequiel Roveretti</span>
-                            <span class="tx-dest">A Mercado Pago</span>
-                        </div>
-                    </div>
-                    <div class="tx-right">
-                        <div class="tx-amount-col">
-                            <span class="tx-amount">$ 15.000</span>
-                            <span class="tx-status">Enviada</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-right tx-arrow"></i>
-                    </div>
-                </div>
-
-                <!-- TRANSFERENCIA 7 -->
-                <div class="tx-item" onclick="openBottomSheet('Juan Ignacio Rodriguez', '$ 30.000', '5 de agosto', 'Lemon Cash', 'CVU 000000310000...', 'img/comprobante7.jpg')">
-                    <div class="tx-left">
-                        <div class="bank-logo-box">
-                            <img src="lemon.jpeg" alt="Lemon">
-                        </div>
-                        <div class="tx-info">
-                            <span class="tx-date">5 de agosto</span>
-                            <span class="tx-name">Juan Ignacio Rodriguez</span>
-                            <span class="tx-dest">A Lemon Cash</span>
-                        </div>
-                    </div>
-                    <div class="tx-right">
-                        <div class="tx-amount-col">
-                            <span class="tx-amount">$ 30.000</span>
-                            <span class="tx-status">Enviada</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-right tx-arrow"></i>
-                    </div>
-                </div>
-
-                <!-- TRANSFERENCIA 8 -->
-                <div class="tx-item" onclick="openBottomSheet('Juan Ignacio Rodriguez', '$ 40.000', '3 de agosto', 'Lemon Cash', 'CVU 000000310000...', 'img/comprobante8.jpg')">
-                    <div class="tx-left">
-                        <div class="bank-logo-box">
-                            <img src="lemon.jpeg" alt="Lemon">
-                        </div>
-                        <div class="tx-info">
-                            <span class="tx-date">3 de agosto</span>
-                            <span class="tx-name">Juan Ignacio Rodriguez</span>
-                            <span class="tx-dest">A Lemon Cash</span>
-                        </div>
-                    </div>
-                    <div class="tx-right">
-                        <div class="tx-amount-col">
-                            <span class="tx-amount">$ 40.000</span>
-                            <span class="tx-status">Enviada</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-right tx-arrow"></i>
-                    </div>
-                </div>
-
-                <!-- TRANSFERENCIA 9 -->
-                <div class="tx-item" onclick="openBottomSheet('Rodriguez Juan Ignacio', '$ 10.463', '11 de mayo', 'Cuenta Virtual', 'CBU 000000000000...', 'img/comprobante9.jpg')">
-                    <div class="tx-left">
-                        <div class="bank-logo-box">
-                            <img src="gali.jpeg" alt="Cuenta Virtual">
-                        </div>
-                        <div class="tx-info">
-                            <span class="tx-date">11 de mayo</span>
-                            <span class="tx-name">Rodriguez Juan Ignacio</span>
-                            <span class="tx-dest">A Cuenta Virtual</span>
-                        </div>
-                    </div>
-                    <div class="tx-right">
-                        <div class="tx-amount-col">
-                            <span class="tx-amount">$ 10.463</span>
-                            <span class="tx-status">Enviada</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-right tx-arrow"></i>
-                    </div>
-                </div>
-
-                <!-- TRANSFERENCIA 10 -->
-                <div class="tx-item" onclick="openBottomSheet('Juan Ignacio Rodriguez', '$ 100', '22 de abril', 'Personal Pay', 'CVU 000000000000...', 'img/comprobante10.jpg')">
-                    <div class="tx-left">
-                        <div class="bank-logo-box">
-                            <img src="lemon.jpeg" alt="Personal Pay">
-                        </div>
-                        <div class="tx-info">
-                            <span class="tx-date">22 de abril</span>
-                            <span class="tx-name">Juan Ignacio Rodriguez</span>
-                            <span class="tx-dest">A Personal Pay</span>
-                        </div>
-                    </div>
-                    <div class="tx-right">
-                        <div class="tx-amount-col">
-                            <span class="tx-amount">$ 100</span>
-                            <span class="tx-status">Enviada</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-right tx-arrow"></i>
-                    </div>
-                </div>
-
-                <!-- TRANSFERENCIA 11 -->
-                <div class="tx-item" onclick="openBottomSheet('Rodriguez Juan Ignacio', '$ 1.337', '8 de marzo', 'Banco Macro', 'CBU 000000000000...', 'img/comprobante11.jpg')">
-                    <div class="tx-left">
-                        <div class="bank-logo-box">
-                            <img src="gali.jpeg" alt="Banco Macro">
-                        </div>
-                        <div class="tx-info">
-                            <span class="tx-date">8 de marzo</span>
-                            <span class="tx-name">Rodriguez Juan Ignacio</span>
-                            <span class="tx-dest">A Banco Macro</span>
-                        </div>
-                    </div>
-                    <div class="tx-right">
-                        <div class="tx-amount-col">
-                            <span class="tx-amount">$ 1.337</span>
-                            <span class="tx-status">Enviada</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-right tx-arrow"></i>
-                    </div>
-                </div>
-
-                <!-- TRANSFERENCIA 12 -->
-                <div class="tx-item" onclick="openBottomSheet('Rodriguez Juan Ignacio', '$ 50', '6 de marzo', 'Banco Macro', 'CBU 000000000000...', 'img/comprobante12.jpg')">
-                    <div class="tx-left">
-                        <div class="bank-logo-box">
-                            <img src="gali.jpeg" alt="Banco Macro">
-                        </div>
-                        <div class="tx-info">
-                            <span class="tx-date">6 de marzo</span>
-                            <span class="tx-name">Rodriguez Juan Ignacio</span>
-                            <span class="tx-dest">A Banco Macro</span>
-                        </div>
-                    </div>
-                    <div class="tx-right">
-                        <div class="tx-amount-col">
-                            <span class="tx-amount">$ 50</span>
-                            <span class="tx-status">Enviada</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-right tx-arrow"></i>
-                    </div>
-                </div>
-
-                <!-- TRANSFERENCIA 13 -->
-                <div class="tx-item" onclick="openBottomSheet('Moira Lujan, sara', '$ 4.000', '5 de marzo', 'Banco Provincia', 'CBU 000000000000...', 'img/comprobante13.jpg')">
-                    <div class="tx-left">
-                        <div class="bank-logo-box">
-                            <img src="gali.jpeg" alt="Banco Provincia">
-                        </div>
-                        <div class="tx-info">
-                            <span class="tx-date">5 de marzo</span>
-                            <span class="tx-name">Moira Lujan, sara</span>
-                            <span class="tx-dest">A Banco Provincia</span>
-                        </div>
-                    </div>
-                    <div class="tx-right">
-                        <div class="tx-amount-col">
-                            <span class="tx-amount">$ 4.000</span>
-                            <span class="tx-status">Enviada</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-right tx-arrow"></i>
-                    </div>
-                </div>
-
-                <!-- TRANSFERENCIA 14 -->
-                <div class="tx-item" onclick="openBottomSheet('Rocio Dolores Herrera', '$ 1.300', '5 de marzo', 'Mercado Pago', 'CVU 000000000000...', 'img/comprobante14.jpg')">
-                    <div class="tx-left">
-                        <div class="bank-logo-box">
-                            <img src="mp.jpeg" alt="Mercado Pago">
-                        </div>
-                        <div class="tx-info">
-                            <span class="tx-date">5 de marzo</span>
-                            <span class="tx-name">Rocio Dolores Herrera</span>
-                            <span class="tx-dest">A Mercado Pago</span>
-                        </div>
-                    </div>
-                    <div class="tx-right">
-                        <div class="tx-amount-col">
-                            <span class="tx-amount">$ 1.300</span>
-                            <span class="tx-status">Enviada</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-right tx-arrow"></i>
-                    </div>
-                </div>
-
-                <!-- TRANSFERENCIA 15 -->
-                <div class="tx-item" onclick="openBottomSheet('Juan Ignacio Rodriguez', '$ 100', '5 de marzo', 'Mercado Pago', 'CVU 000000000000...', 'img/comprobante15.jpg')">
-                    <div class="tx-left">
-                        <div class="bank-logo-box">
-                            <img src="mp.jpeg" alt="Mercado Pago">
-                        </div>
-                        <div class="tx-info">
-                            <span class="tx-date">5 de marzo</span>
-                            <span class="tx-name">Juan Ignacio Rodriguez</span>
-                            <span class="tx-dest">A Mercado Pago</span>
-                        </div>
-                    </div>
-                    <div class="tx-right">
-                        <div class="tx-amount-col">
-                            <span class="tx-amount">$ 100</span>
-                            <span class="tx-status">Enviada</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-right tx-arrow"></i>
-                    </div>
-                </div>
-
-                <!-- TRANSFERENCIA 16 -->
-                <div class="tx-item" onclick="openBottomSheet('Juan Ignacio Rodriguez', '$ 1', '4 de marzo', 'Personal Pay', 'CVU 000000000000...', 'img/comprobante16.jpg')">
-                    <div class="tx-left">
-                        <div class="bank-logo-box">
-                            <img src="lemon.jpeg" alt="Personal Pay">
-                        </div>
-                        <div class="tx-info">
-                            <span class="tx-date">4 de marzo</span>
-                            <span class="tx-name">Juan Ignacio Rodriguez</span>
-                            <span class="tx-dest">A Personal Pay</span>
-                        </div>
-                    </div>
-                    <div class="tx-right">
-                        <div class="tx-amount-col">
-                            <span class="tx-amount">$ 1</span>
-                            <span class="tx-status">Enviada</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-right tx-arrow"></i>
-                    </div>
-                </div>
-
-                <!-- TRANSFERENCIA 17 -->
-                <div class="tx-item" onclick="openBottomSheet('Juan Ignacio Rodriguez', '$ 1.000', '2 de marzo', 'Mercado Pago', 'CVU 000000000000...', 'img/comprobante17.jpg')">
-                    <div class="tx-left">
-                        <div class="bank-logo-box">
-                            <img src="mp.jpeg" alt="Mercado Pago">
-                        </div>
-                        <div class="tx-info">
-                            <span class="tx-date">2 de marzo</span>
-                            <span class="tx-name">Juan Ignacio Rodriguez</span>
-                            <span class="tx-dest">A Mercado Pago</span>
-                        </div>
-                    </div>
-                    <div class="tx-right">
-                        <div class="tx-amount-col">
-                            <span class="tx-amount">$ 1.000</span>
-                            <span class="tx-status">Enviada</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-right tx-arrow"></i>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="fab-up" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-                <i class="fa-solid fa-chevron-up"></i>
-            </div>
+        <div class="subtitle">
+            Ingresá con tu clave
         </div>
 
-        <!-- ==================== PANTALLA: VER COMPROBANTE (INDEPENDIENTE) ==================== -->
-        <div id="screen-comprobante" class="screen">
-            <div class="header-act">
-                <div class="header-act-left">
-                    <i class="fa-solid fa-arrow-left" onclick="closeComprobanteView()"></i>
-                    <h1>Comprobante</h1>
-                </div>
-                <div class="header-act-right">
-                    <i class="fa-solid fa-share-nodes" style="color: var(--nx-purple-dark); font-size: 16px;"></i>
-                </div>
-            </div>
-            <div class="receipt-image-container">
-                <img id="receipt-img-element" src="" alt="Comprobante de transferencia">
-            </div>
+
+        <div class="pin-indicators">
+
+            <div class="pin-line"></div>
+            <div class="pin-line"></div>
+            <div class="pin-line"></div>
+            <div class="pin-line"></div>
+            <div class="pin-line"></div>
+            <div class="pin-line"></div>
+
         </div>
 
-        <!-- ==================== OVERLAY DETALLE (BOTTOM SHEET) ==================== -->
-        <div id="bs-overlay" class="bottom-sheet-overlay" onclick="closeBottomSheet()"></div>
-        <div id="bs-sheet" class="bottom-sheet">
-            <div class="bs-handle"></div>
-            
-            <div class="bs-header">
-                <span class="bs-title" id="bs-title-text">Transferencia a Juan Ignacio Rodriguez</span>
-                <i class="fa-solid fa-xmark bs-close" onclick="closeBottomSheet()"></i>
-            </div>
 
-            <div class="bs-amount-container">
-                <span class="sign">$</span>
-                <span class="amount" id="bs-amount-text">1</span>
-            </div>
+        <a
+            href="#"
+            class="recovery-link"
+        >
+            ¿Olvidaste tu clave?
+        </a>
 
-            <div class="bs-datetime" id="bs-date-text">17/AGO/2026 - 14:23 H</div>
 
-            <div class="bs-dest-card">
-                <div class="bs-dest-icon" id="bs-bank-logo-container">
-                    <img id="bs-bank-img" src="" alt="Logo Banco">
-                </div>
-                <div class="bs-dest-info">
-                    <span class="bs-dest-name" id="bs-bank-text">Banco Galicia</span>
-                    <span class="bs-dest-cbu" id="bs-cbu-text">CBU 0070114930004171046118</span>
-                </div>
-            </div>
+        <button
+            id="faceBtn"
+            class="face-id-btn"
+            type="button"
+        >
 
-            <div class="bs-id-container">
-                <div class="bs-id-left">
-                    <span class="bs-id-label">COELSA ID</span>
-                    <span class="bs-id-value">ORD6LEN8M8YG6MP0NM1Y30</span>
-                </div>
-                <i class="fa-regular fa-copy bs-copy"></i>
-            </div>
+            <svg viewBox="0 0 24 24">
 
-            <button class="bs-btn-primary" onclick="openComprobanteView()">Ver comprobante</button>
-            <button class="bs-btn-secondary">Repetir transferencia</button>
-        </div>
+                <path d="
+                    M9 3H5
+                    a2 2 0 0 0-2 2
+                    v4h2V5h4V3
 
-        <!-- ==================== NAVEGACIÓN INFERIOR ==================== -->
-        <nav class="bottom-nav">
-            <div class="nav-link active" id="tab-home" onclick="switchTab('home')">
-                <i class="fa-solid fa-house"></i>
-                <span>Inicio</span>
-            </div>
-            <div class="nav-link" id="tab-actividad" onclick="switchTab('actividad')">
-                <i class="fa-solid fa-chart-simple"></i>
-                <span>Cuentas</span>
-            </div>
-            <div class="nav-qr-btn"><i class="fa-solid fa-qrcode"></i></div>
-            <div class="nav-link">
-                <i class="fa-regular fa-credit-card"></i>
-                <span>Tarjetas</span>
-            </div>
-            <div class="nav-link">
-                <i class="fa-solid fa-border-all"></i>
-                <span>Más</span>
-            </div>
-        </nav>
+                    m6 0h4
+                    a2 2 0 0 1 2 2
+                    v4h-2V5h-4V3
+
+                    M3 15v4
+                    a2 2 0 0 0 2 2
+                    h4v-2H5v-4H3
+
+                    m18 0v4
+                    h-4v2h4
+                    a2 2 0 0 0 2-2
+                    v-4h-2
+                "/>
+
+            </svg>
+
+            Reconocimiento facial
+
+        </button>
 
     </div>
 
+
+    <!-- =========================================
+         FACE ID DEMO
+    ========================================= -->
+
+    <div
+        id="faceModal"
+        class="face-modal-overlay"
+    >
+
+        <div class="canvas">
+
+            <div
+                id="faceId"
+                class="face-id-wrapper"
+            >
+
+                <!-- CARA -->
+
+                <svg
+                    class="face-id-default"
+                    viewBox="0 0 30 30"
+                >
+
+                    <path
+                        d="
+                            M12.062 20
+                            c.688.5 1.688 1 2.938 1
+                            s2.25-.5 2.938-1
+
+                            M20 12v2
+                            M10 12v2
+                            M15 12v4
+                            a1 1 0 0 1-1 1
+                        "
+                        fill="none"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+
+                    <g
+                        fill="none"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+
+                        <path
+                            d="
+                                M26 9V6
+                                a2 2 0 0 0-2-2h-3
+
+                                M9 4H6
+                                a2 2 0 0 0-2 2v3
+
+                                M21 26h3
+                                a2 2 0 0 0 2-2v-3
+
+                                M4 21v3
+                                a2 2 0 0 0 2 2h3
+                            "
+                        />
+
+                    </g>
+
+                </svg>
+
+
+                <!-- TRES ANILLOS -->
+
+                <div class="circle green"></div>
+
+                <div class="circle blue"></div>
+
+                <div class="circle purple"></div>
+
+
+                <!-- CHECK -->
+
+                <svg
+                    class="face-id-check"
+                    viewBox="0 0 80 80"
+                >
+
+                    <path
+                        class="path-tick"
+                        d="M25,45 35,55 60,30"
+                        stroke="#fff"
+                        stroke-width="5"
+                        fill="none"
+                        stroke-linecap="butt"
+                        stroke-linejoin="butt"
+                    />
+
+                </svg>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
     <script>
-        let currentReceiptImage = '';
 
-        function switchTab(tab) {
-            document.getElementById('screen-home').classList.remove('active');
-            document.getElementById('screen-actividad').classList.remove('active');
-            document.getElementById('screen-comprobante').classList.remove('active');
-            
-            document.getElementById('tab-home').classList.remove('active');
-            document.getElementById('tab-actividad').classList.remove('active');
+        const faceBtn =
+            document.getElementById("faceBtn");
 
-            if(tab === 'home') {
-                document.getElementById('screen-home').classList.add('active');
-                document.getElementById('tab-home').classList.add('active');
-            } else if (tab === 'actividad') {
-                document.getElementById('screen-actividad').classList.add('active');
-                document.getElementById('tab-actividad').classList.add('active');
-                closeBottomSheet();
+        const faceModal =
+            document.getElementById("faceModal");
+
+        const faceId =
+            document.getElementById("faceId");
+
+
+        let running = false;
+
+
+        /*
+         * SONIDO
+         */
+
+        function playUnlockSound() {
+
+            try {
+
+                const AudioContext =
+                    window.AudioContext ||
+                    window.webkitAudioContext;
+
+                const context =
+                    new AudioContext();
+
+                const oscillator =
+                    context.createOscillator();
+
+                const gain =
+                    context.createGain();
+
+
+                oscillator.type = "sine";
+
+                oscillator.frequency.setValueAtTime(
+                    880,
+                    context.currentTime
+                );
+
+                oscillator.frequency.exponentialRampToValueAtTime(
+                    1320,
+                    context.currentTime + 0.09
+                );
+
+
+                gain.gain.setValueAtTime(
+                    0.0001,
+                    context.currentTime
+                );
+
+                gain.gain.exponentialRampToValueAtTime(
+                    0.12,
+                    context.currentTime + 0.015
+                );
+
+                gain.gain.exponentialRampToValueAtTime(
+                    0.0001,
+                    context.currentTime + 0.16
+                );
+
+
+                oscillator.connect(gain);
+
+                gain.connect(
+                    context.destination
+                );
+
+
+                oscillator.start();
+
+                oscillator.stop(
+                    context.currentTime + 0.17
+                );
+
+            } catch (error) {
+
+                console.log(
+                    "Audio no disponible."
+                );
+
             }
+
         }
 
-        function openBottomSheet(name, amount, date, bank, cbu, imagePath) {
-            document.getElementById('bs-title-text').innerText = 'Transferencia a ' + name;
-            document.getElementById('bs-amount-text').innerText = amount.replace('$ ', '');
-            document.getElementById('bs-date-text').innerText = date.toUpperCase() + ' - 14:23 H';
-            document.getElementById('bs-bank-text').innerText = bank;
-            document.getElementById('bs-cbu-text').innerText = cbu;
-            
-            currentReceiptImage = imagePath;
 
-            const logoImgSrc = event.currentTarget.querySelector('.bank-logo-box img').src;
-            document.getElementById('bs-bank-img').src = logoImgSrc;
+        /*
+         * VIBRACIÓN
+         */
 
-            const overlay = document.getElementById('bs-overlay');
-            const sheet = document.getElementById('bs-sheet');
-            
-            overlay.style.display = 'block';
-            setTimeout(() => {
-                overlay.style.opacity = '1';
-                sheet.style.transform = 'translateY(0)';
-            }, 10);
-        }
+        function vibrateUnlock() {
 
-        function closeBottomSheet() {
-            const overlay = document.getElementById('bs-overlay');
-            const sheet = document.getElementById('bs-sheet');
-            
-            sheet.style.transform = 'translateY(100%)';
-            overlay.style.opacity = '0';
-            setTimeout(() => {
-                overlay.style.display = 'none';
-            }, 300);
-        }
+            if (
+                "vibrate" in navigator
+            ) {
 
-        function openComprobanteView() {
-            closeBottomSheet();
-            document.getElementById('receipt-img-element').src = currentReceiptImage;
-            document.getElementById('screen-actividad').classList.remove('active');
-            document.getElementById('screen-comprobante').classList.add('active');
-        }
+                navigator.vibrate([
+                    35,
+                    25,
+                    60
+                ]);
 
-        function closeComprobanteView() {
-            document.getElementById('screen-comprobante').classList.remove('active');
-            document.getElementById('screen-actividad').classList.add('active');
-        }
-
-        function toggleBalance() {
-            const balanceElem = document.getElementById('balance-amount');
-            if (balanceElem.innerText === '••••••') {
-                balanceElem.innerText = '174.064';
-            } else {
-                balanceElem.innerText = '••••••';
             }
+
         }
+
+
+        /*
+         * INICIO
+         */
+
+        faceBtn.addEventListener(
+            "click",
+            function () {
+
+                if (running) {
+                    return;
+                }
+
+                running = true;
+
+
+                faceModal.classList.add(
+                    "active"
+                );
+
+
+                faceId.classList.remove(
+                    "active"
+                );
+
+                faceId.classList.remove(
+                    "completed"
+                );
+
+
+                /*
+                 * Forzamos reinicio de la
+                 * animación CSS.
+                 */
+
+                void faceId.offsetWidth;
+
+
+                /*
+                 * Comienza la animación
+                 */
+
+                faceId.classList.add(
+                    "active"
+                );
+
+
+                /*
+                 * La animación dura
+                 * exactamente 2.3 segundos.
+                 */
+
+                setTimeout(
+                    function () {
+
+                        /*
+                         * CHECK
+                         */
+
+                        faceId.classList.add(
+                            "completed"
+                        );
+
+
+                        /*
+                         * Vibración
+                         */
+
+                        vibrateUnlock();
+
+
+                        /*
+                         * Sonido
+                         */
+
+                        playUnlockSound();
+
+
+                        /*
+                         * Esperamos a que
+                         * termine de dibujarse
+                         * el check y redirigimos
+                         */
+
+                        setTimeout(
+                            function () {
+
+                                /*
+                                 * REDIRECCIÓN AUTOMÁTICA
+                                 */
+
+                                window.location.href =
+                                    "nx.html";
+
+                            },
+                            650
+                        );
+
+                    },
+                    2300
+                );
+
+            }
+        );
+
     </script>
+
 </body>
 </html>
