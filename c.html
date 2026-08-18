@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generador de comprobantes - Naranja X</title>
+<!-- =========================================================
+     LIBRERÍAS
+========================================================= -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<!-- =========================================================
+     ESTILOS
+========================================================= -->
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+body{
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+    background:#f3f4f6;
+    color:#111827;
+}
+button,
+input,
+textarea,
+select{
+    font-family:inherit;
+}
+.app{
+    width:100%;
+    max-width:1250px;
+    margin:auto;
+    padding:24px;
+}
+/* =========================================================
+   HEADER
+========================================================= -->
+header{
+    background:#111827;
+    color:white;
+    border-radius:22px;
+    padding:25px;
+    margin-bottom:20px;
+    box-shadow:0 10px 35px rgba(0,0,0,.08);
+}
+header h1{
+    font-size:27px;
+    margin-bottom:7px;
+}
+header p{
+    color:#d1d5db;
+    font-size:14px;
+}
+/* =========================================================
+   AVISO
+========================================================= -->
+.demo-warning{
+    background:#fff7ed;
+    border:1px solid #fed7aa;
+    color:#9a3412;
+    border-radius:15px;
+    padding:13px 15px;
+    margin-bottom:20px;
+    font-size:13px;
+    line-height:1.5;
+}
+.demo-warning strong{
+    display:block;
+    margin-bottom:3px;
+}
+/* =========================================================
+   GRID
+========================================================= -->
+.grid{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 440px;
+    gap:20px;
+    align-items:start;
+}
+/* =========================================================
+   PANEL
+========================================================= -->
+.panel{
+    background:white;
+    border-radius:22px;
+    padding:22px;
+    box-shadow:0 8px 30px rgba(0,0,0,.06);
+}
+.panel h2{
+    font-size:19px;
+    margin-bottom:18px;
+}
+/* =========================================================
+   SECTION
+========================================================= -->
+.section{
+    border-top:1px solid #e5e7eb;
+    padding-top:18px;
+    margin-top:18px;
+}
+.section:first-of-type{
+    border-top:none;
+    padding-top:0;
+    margin-top:0;
+}
+.section-title{
+    font-size:14px;
+    font-weight:700;
+    margin-bottom:12px;
+    color:#374151;
+}
+/* =========================================================
+   CAMPOS
+========================================================= -->
+.fields{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+.field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+.full{
+    grid-column:1/-1;
+}
+label{
+    font-size:12px;
+    font-weight:600;
+    color:#6b7280;
+}
+input,
+textarea,
+select{
+    width:100%;
+    border:1px solid #d1d5db;
+    border-radius:12px;
+    padding:12px 13px;
+    font-size:14px;
+    outline:none;
+    background:white;
+    transition:.2s;
+}
+input:focus,
+textarea:focus,
+select:focus{
+    border-color:#111827;
+    box-shadow:0 0 0 3px rgba(17,24,39,.08);
+}
+textarea{
+    resize:vertical;
+    min-height:75px;
+}
+.amount-input{
+    font-size:25px;
+    font-weight:700;
+}
+/* =========================================================
+   CAMPO DETECTADO
+========================================================= -->
+.detected{
+    border-color:#16a34a !important;
+    background:#f0fdf4 !important;
+    animation:detected .8s ease;
+}
+@keyframes detected{
+    0%{box-shadow:0 0 0 0 rgba(22,163,74,.5);}
+    100%{box-shadow:0 0 0 8px rgba(22,163,74,0);}
+}
+/* =========================================================
+   ENTIDAD DETECTADA
+========================================================= -->
+.entity-preview{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:5px;
+    min-height:42px;
+}
+.entity-logo{
+    width:38px;
+    height:38px;
+    border-radius:10px;
+    object-fit:contain;
+    border:1px solid #e5e7eb;
+    background:white;
+    display:none;
+}
+.entity-logo.visible{
+    display:block;
+}
+.entity-name{
+    font-size:12px;
+    font-weight:700;
+    color:#374151;
+}
+/* =========================================================
+   BOTONES
+========================================================= -->
+.buttons{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+    flex-wrap:wrap;
+}
+button{
+    border:none;
+    border-radius:12px;
+    padding:12px 17px;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.15s;
+}
+button:hover{
+    transform:translateY(-1px);
+}
+button:active{
+    transform:translateY(0);
+}
+.primary{
+    background:#111827;
+    color:white;
+}
+.secondary{
+    background:#e5e7eb;
+    color:#111827;
+}
+.success{
+    background:#16a34a;
+    color:white;
+}
+/* =========================================================
+   OCR
+========================================================= -->
+.ocr-box{
+    border:2px dashed #d1d5db;
+    border-radius:16px;
+    padding:20px;
+    text-align:center;
+    background:#fafafa;
+}
+.ocr-box input{
+    border:none;
+    padding:10px 0;
+}
+.ocr-status{
+    font-size:13px;
+    color:#6b7280;
+    margin-top:10px;
+}
+.progress{
+    width:100%;
+    height:7px;
+    background:#e5e7eb;
+    border-radius:20px;
+    overflow:hidden;
+    margin-top:12px;
+}
+.progress-bar{
+    height:100%;
+    width:0%;
+    background:#111827;
+    transition:.2s;
+}
+.detected-box{
+    margin-top:15px;
+    padding:13px;
+    border-radius:12px;
+    background:#f0fdf4;
+    border:1px solid #bbf7d0;
+    font-size:12px;
+    text-align:left;
+    display:none;
+    line-height:1.6;
+}
+.ocr-raw{
+    margin-top:12px;
+    display:none;
+}
+.ocr-raw textarea{
+    min-height:130px;
+    font-family:ui-monospace,monospace;
+    font-size:11px;
+}
+
+/* =========================================================
+   ESTILO EXACTO COMPROBANTE NARANJA X (MÓVIL REALISTA)
+========================================================= -->
+.receipt-wrapper{
+    display:flex;
+    justify-content:center;
+}
+.receipt{
+    width:100%;
+    max-width:390px;
+    background:#f5f6f8; 
+    border-radius:32px;
+    padding:20px 16px 24px 16px;
+    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color:#1c1c1e;
+    box-shadow:0 12px 40px rgba(0,0,0,0.12);
+    border: 1px solid #e5e7eb;
+}
+
+/* Barra superior simulada de app (flecha atrás, título, compartir) */
+.nx-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    padding: 0 4px;
+}
+.nx-back-icon {
+    font-size: 20px;
+    font-weight: bold;
+    color: #111;
+    cursor: pointer;
+}
+.nx-top-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111;
+}
+.nx-share-icon {
+    font-size: 18px;
+    color: #ff6600;
+    cursor: pointer;
+}
+
+/* Logo de Naranja X superior dentro del comprobante */
+.nx-brand-logo {
+    height: 24px;
+    object-fit: contain;
+    margin-bottom: 10px;
+    display: block;
+}
+.nx-main-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 16px;
+    letter-spacing: -0.3px;
+}
+
+/* Tarjetas blancas redondeadas impecables */
+.nx-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+}
+
+/* Tarjeta de monto (Enviaste) */
+.nx-label-envias {
+    font-size: 13px;
+    font-weight: 600;
+    color: #4b5563;
+    margin-bottom: 2px;
+}
+.nx-amount-row {
+    font-size: 34px;
+    font-weight: 800;
+    color: #111827;
+    display: flex;
+    align-items: baseline;
+    gap: 1px;
+    margin-bottom: 4px;
+}
+.nx-currency {
+    font-size: 20px;
+    font-weight: 700;
+}
+.nx-decimals {
+    font-size: 18px;
+    font-weight: 700;
+}
+.nx-datetime {
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+/* Tarjetas de cuentas (origen / destino) */
+.nx-section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 12px;
+}
+.nx-account-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+.nx-bank-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    object-fit: contain;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    flex-shrink: 0;
+}
+.nx-account-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+.nx-account-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.nx-bank-name {
+    font-size: 11px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+/* Campos detalle (CBU / CUIL / Concepto) */
+.nx-field-group {
+    margin-top: 10px;
+}
+.nx-field-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    margin-bottom: 2px;
+}
+.nx-field-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1f2937;
+    word-break: break-all;
+}
+
+.nx-concept-box {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #f3f4f6;
+    font-size: 12px;
+    color: #4b5563;
+}
+
+.simulation-label{
+    text-align:center;
+    margin-top:12px;
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:.4px;
+    color:#b45309;
+}
+.live-time{
+    font-size:11px;
+    color:#9ca3af;
+    margin-top:10px;
+    text-align:center;
+}
+
+@media(max-width:900px){
+    .grid{grid-template-columns:1fr;}
+}
+@media(max-width:520px){
+    .app{padding:12px;}
+    .fields{grid-template-columns:1fr;}
+    .full{grid-column:auto;}
+    .panel{padding:17px;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+    <h1>Comprobantes Naranja X</h1>
+    <p>Generador idéntico basado en el diseño oficial de la aplicación móvil.</p>
+</header>
+
+<div class="demo-warning">
+    <strong>Modo simulación y descarga directa</strong>
+    Haz clic en <strong>"Descargar PNG"</strong> para guardar la imagen directamente en tu dispositivo (en móviles con soporte, se abrirá el diálogo nativo del sistema para guardarla en Fotos/Galería).
+</div>
+
+<div class="grid">
+<!-- PANEL IZQUIERDO -->
+<div class="panel">
+<h2>Datos de la operación</h2>
+
+<div class="section">
+<div class="section-title">Emisor</div>
+<div class="fields">
+<div class="field full">
+<label for="emisorNombre">Nombre completo</label>
+<input id="emisorNombre" type="text" placeholder="Nombre completo del emisor" value="Juan Ignacio Rodriguez">
+</div>
+<div class="field">
+<label for="emisorCuil">CUIL</label>
+<input id="emisorCuil" type="text" placeholder="20-12345678-9" value="20-44980672-8">
+</div>
+<div class="field">
+<label for="emisorBanco">Banco / entidad</label>
+<input id="emisorBanco" type="text" placeholder="Naranja X" value="Naranja X">
+<div class="entity-preview">
+<img id="emisorLogoInput" class="entity-logo" alt="Logo de entidad">
+<span id="emisorEntidadDetectada" class="entity-name"></span>
+</div>
+</div>
+<div class="field full">
+<label for="emisorCbu">CBU / CVU</label>
+<input id="emisorCbu" type="text" maxlength="22" placeholder="0000000000000000000000" value="4530000800010264079863">
+</div>
+</div>
+</div>
+
+<div class="section">
+<div class="section-title">Destinatario</div>
+<div class="fields">
+<div class="field full">
+<label for="destNombre">Nombre completo</label>
+<input id="destNombre" type="text" placeholder="Nombre del destinatario" value="Juan Ignacio Rodriguez">
+</div>
+<div class="field">
+<label for="destCuil">CUIL</label>
+<input id="destCuil" type="text" placeholder="20-12345678-9" value="20-44980672-8">
+</div>
+<div class="field">
+<label for="destBanco">Banco / entidad</label>
+<input id="destBanco" type="text" placeholder="Banco Galicia" value="Galicia">
+<div class="entity-preview">
+<img id="destLogoInput" class="entity-logo" alt="Logo de entidad">
+<span id="destEntidadDetectada" class="entity-name"></span>
+</div>
+</div>
+<div class="field full">
+<label for="destCbu">CBU / CVU</label>
+<input id="destCbu" type="text" maxlength="22" placeholder="0000000000000000000000" value="0070114930004171046118">
+</div>
+</div>
+</div>
+
+<div class="section">
+<div class="section-title">Información de la operación</div>
+<div class="fields">
+<div class="field full">
+<label for="monto">Monto</label>
+<input id="monto" class="amount-input" type="number" step="0.01" min="0" placeholder="0.00" value="1.00">
+</div>
+<div class="field full">
+<label for="concepto">Concepto</label>
+<textarea id="concepto" placeholder="Concepto de la operación"></textarea>
+</div>
+<div class="field">
+<label for="tipoOperacion">Tipo</label>
+<select id="tipoOperacion">
+<option>Transferencia</option>
+<option>Pago</option>
+<option>Envío de dinero</option>
+</select>
+</div>
+<div class="field">
+<label for="estado">Estado</label>
+<select id="estado">
+<option>Completada</option>
+<option>Pendiente</option>
+</select>
+</div>
+</div>
+</div>
+
+<div class="section">
+<div class="section-title">Carga automática desde imagen</div>
+<div class="ocr-box">
+<p style="font-weight:700;font-size:14px;">Subí una captura</p>
+<input id="imagenOCR" type="file" accept="image/*">
+<div id="ocrStatus" class="ocr-status">Esperando imagen...</div>
+<div class="progress"><div id="progressBar" class="progress-bar"></div></div>
+<div id="detectedBox" class="detected-box"></div>
+<div id="ocrRaw" class="ocr-raw"><textarea id="ocrText" readonly></textarea></div>
+</div>
+</div>
+
+<div class="buttons">
+<button type="button" class="primary" onclick="generarComprobante()">Actualizar comprobante</button>
+<button type="button" class="secondary" onclick="limpiarFormulario()">Limpiar</button>
+</div>
+<div class="buttons">
+<button type="button" class="success" onclick="descargarPNG()">Descargar PNG (Guardar en Fotos)</button>
+<button type="button" class="primary" onclick="descargarPDF()">Descargar PDF</button>
+</div>
+</div>
+
+<!-- PANEL DERECHO (VISTA PREVIA EXACTA) -->
+<div class="panel">
+<h2>Vista previa</h2>
+<div class="receipt-wrapper">
+<div id="comprobante" class="receipt">
+
+    <!-- Barra simulada idéntica a app móvil -->
+    <div class="nx-top-bar">
+        <span class="nx-back-icon">←</span>
+        <span class="nx-top-title">Comprobante</span>
+        <span class="nx-share-icon">🔗</span>
+    </div>
+
+    <!-- CABECERA PRINCIPAL -->
+    <div>
+        <img id="previewHeaderLogo" class="nx-brand-logo" alt="Naranja X" src="logos/naranja-x.png">
+        <div id="receiptTitle" class="nx-main-title">Comprobante de transferencia</div>
+    </div>
+
+    <!-- TARJETA 1: MONTO / ENVIASTE -->
+    <div class="nx-card">
+        <div class="nx-label-envias">Enviaste</div>
+        <div class="nx-amount-row">
+            <span class="nx-currency">$</span>
+            <span id="previewMontoEntero">1</span>
+            <span class="nx-decimals" id="previewMontoDecimal">,00</span>
+        </div>
+        <div class="nx-datetime" id="previewFechaHora">17/AGO/2026 - 14:23 h</div>
+    </div>
+
+    <!-- TARJETA 2: CUENTA ORIGEN -->
+    <div class="nx-card">
+        <div class="nx-section-title">Cuenta origen</div>
+        <div class="nx-account-row">
+            <img id="previewEmisorLogo" class="nx-bank-logo" alt="Logo Emisor">
+            <div class="nx-account-info">
+                <span id="previewEmisorNombre" class="nx-account-name">Juan Ignacio Rodriguez</span>
+                <span id="previewEmisorBanco" class="nx-bank-name">Naranja X</span>
+            </div>
+        </div>
+        <div class="nx-field-group">
+            <div class="nx-field-label">CBU</div>
+            <div id="previewEmisorCbu" class="nx-field-value">4530000800010264079863</div>
+        </div>
+        <div class="nx-field-group" style="margin-top:8px;">
+            <div class="nx-field-label">CUIL</div>
+            <div id="previewEmisorCuil" class="nx-field-value">20-44980672-8</div>
+        </div>
+    </div>
+
+    <!-- TARJETA 3: CUENTA DESTINO -->
+    <div class="nx-card">
+        <div class="nx-section-title">Cuenta destino</div>
+        <div class="nx-account-row">
+            <img id="previewDestLogo" class="nx-bank-logo" alt="Logo Destinatario">
+            <div class="nx-account-info">
+                <span id="previewDestNombre" class="nx-account-name">Juan Ignacio Rodriguez</span>
+                <span id="previewDestBanco" class="nx-bank-name">Banco Galicia</span>
+            </div>
+        </div>
+        <div class="nx-field-group">
+            <div class="nx-field-label">CBU</div>
+            <div id="previewDestCbu" class="nx-field-value">0070114930004171046118</div>
+        </div>
+        <div class="nx-field-group" style="margin-top:8px;">
+            <div class="nx-field-label">CUIL</div>
+            <div id="previewDestCuil" class="nx-field-value">20-44980672-8</div>
+        </div>
+        <div class="nx-concept-box" id="previewConceptoContainer" style="display:none;">
+            <strong>Concepto:</strong> <span id="previewConcepto">Sin concepto</span>
+        </div>
+    </div>
+
+    <div class="simulation-label">SIMULACIÓN · NO ES COMPROBANTE BANCARIO OFICIAL</div>
+
+</div>
+</div>
+<div id="liveTime" class="live-time">Hora de Argentina: —</div>
+</div>
+</div>
+</div>
+
+<script>
+const TIMEZONE = "America/Argentina/Buenos_Aires";
+const LOGOS_PATH = "logos/";
+
+const bancos = {
+    "bbva": { nombre:"BBVA", aliases:["bbva","banco bbva"], logo: LOGOS_PATH + "bbva.png" },
+    "galicia": { nombre:"Banco Galicia", aliases:["galicia","banco galicia"], logo: LOGOS_PATH + "icon.jpeg" },
+    "santander": { nombre:"Santander", aliases:["santander","banco santander"], logo: LOGOS_PATH + "santander.png" },
+    "icbc": { nombre:"ICBC", aliases:["icbc"], logo: LOGOS_PATH + "icbc.png" },
+    "macro": { nombre:"Macro", aliases:["macro"], logo: LOGOS_PATH + "macro.png" },
+    "nacion": { nombre:"Banco Nación", aliases:["nacion","banco nacion"], logo: LOGOS_PATH + "banco-nacion.png" },
+    "provincia": { nombre:"Banco Provincia", aliases:["provincia"], logo: LOGOS_PATH + "banco-provincia.png" },
+    "credicoop": { nombre:"Credicoop", aliases:["credicoop"], logo: LOGOS_PATH + "credicoop.png" },
+    "patagonia": { nombre:"Patagonia", aliases:["patagonia"], logo: LOGOS_PATH + "patagonia.png" },
+    "comafi": { nombre:"Comafi", aliases:["comafi"], logo: LOGOS_PATH + "comafi.png" },
+    "ciudad": { nombre:"Banco Ciudad", aliases:["ciudad"], logo: LOGOS_PATH + "banco-ciudad.png" },
+    "hipotecario": { nombre:"Banco Hipotecario", aliases:["hipotecario"], logo: LOGOS_PATH + "hipotecario.png" },
+    "brubank": { nombre:"Brubank", aliases:["brubank"], logo: LOGOS_PATH + "brubank.png" },
+    "uala": { nombre:"Ualá", aliases:["uala"], logo: LOGOS_PATH + "uala.png" },
+    "naranja-x": { nombre:"Naranja X", aliases:["naranja x","naranjax"], logo: LOGOS_PATH + "naranja-x.png" },
+    "mercado-pago": { nombre:"Mercado Pago", aliases:["mercado pago"], logo: LOGOS_PATH + "mercado-pago.png" },
+    "prex": { nombre:"Prex", aliases:["prex"], logo: LOGOS_PATH + "prex.png" },
+    "personal-pay": { nombre:"Personal Pay", aliases:["personal pay"], logo: LOGOS_PATH + "personal-pay.png" },
+    "lemon": { nombre:"Lemon", aliases:["lemon"], logo: LOGOS_PATH + "lemon.png" }
+};
+
+const $ = id => document.getElementById(id);
+
+function normalizarParaBusqueda(texto){
+    return String(texto || "").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^\p{L}\p{N}\s]/gu," ").replace(/\s+/g," ").trim();
+}
+function normalizarTexto(texto){
+    return String(texto || "").replace(/\r/g,"").replace(/[ \t]+/g," ").trim();
+}
+function detectarEntidad(texto){
+    const normalizado = normalizarParaBusqueda(texto);
+    let mejorResultado = null;
+    let mejorLongitud = 0;
+    for(const [key, banco] of Object.entries(bancos)){
+        for(const alias of banco.aliases){
+            const aliasNorm = normalizarParaBusqueda(alias);
+            if(normalizado.includes(aliasNorm)){
+                if(aliasNorm.length > mejorLongitud){
+                    mejorLongitud = aliasNorm.length;
+                    mejorResultado = { key, nombre: banco.nombre, logo: banco.logo };
+                }
+            }
+        }
+    }
+    return mejorResultado;
+}
+
+function aplicarLogo(elemento, logo){
+    if(!elemento) return;
+    elemento.style.display = logo ? "block" : "none";
+    if(logo) elemento.src = logo;
+}
+
+function actualizarEntidadVisual(tipo){
+    const bancoInput = tipo === "emisor" ? $("emisorBanco") : $("destBanco");
+    const logoInput = tipo === "emisor" ? $("emisorLogoInput") : $("destLogoInput");
+    const textoEntidad = tipo === "emisor" ? $("emisorEntidadDetectada") : $("destEntidadDetectada");
+    const entidad = detectarEntidad(bancoInput.value);
+    if(entidad){
+        textoEntidad.textContent = "Identificada: " + entidad.nombre;
+        aplicarLogo(logoInput, entidad.logo);
+    } else {
+        textoEntidad.textContent = "";
+        aplicarLogo(logoInput, "");
+    }
+    generarComprobante();
+}
+
+function obtenerFechaArgentina(){
+    const partes = new Intl.DateTimeFormat("es-AR", {
+        timeZone: TIMEZONE, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false
+    }).formatToParts(new Date());
+    let res = {};
+    partes.forEach(p => { if(p.type !== "literal") res[p.type] = p.value; });
+    return res;
+}
+
+const mesesAbrev = ["ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"];
+
+function formatearMontoDividido(valor){
+    const num = Number(valor);
+    if(isNaN(num)) return { entero: "0", decimal: ",00" };
+    const partes = num.toFixed(2).split(".");
+    const enteroFormateado = Number(partes[0]).toLocaleString("es-AR");
+    return { entero: enteroFormateado, decimal: "," + partes[1] };
+}
+
+function generarComprobante(){
+    const f = obtenerFechaArgentina();
+    const mesNombre = mesesAbrev[parseInt(f.month, 10) - 1] || "AGO";
+    const fechaHoraStr = `${f.day}/${mesNombre}/${f.year} - ${f.hour}:${f.minute} h`;
+
+    const emisorNombre = $("emisorNombre").value.trim();
+    const emisorBanco = $("emisorBanco").value.trim();
+    const emisorCbu = $("emisorCbu").value.trim();
+    const emisorCuil = $("emisorCuil").value.trim();
+
+    const destNombre = $("destNombre").value.trim();
+    const destBanco = $("destBanco").value.trim();
+    const destCbu = $("destCbu").value.trim();
+    const destCuil = $("destCuil").value.trim();
+
+    const entidadEmisor = detectarEntidad(emisorBanco);
+    const entidadDest = detectarEntidad(destBanco);
+
+    // Emisor Preview
+    $("previewEmisorNombre").textContent = emisorNombre || "Emisor";
+    $("previewEmisorCbu").textContent = emisorCbu || "—";
+    $("previewEmisorCuil").textContent = emisorCuil || "—";
+    $("previewEmisorBanco").textContent = entidadEmisor ? entidadEmisor.nombre : (emisorBanco || "Banco");
+    aplicarLogo($("previewEmisorLogo"), entidadEmisor ? entidadEmisor.logo : "");
+    aplicarLogo($("previewHeaderLogo"), entidadEmisor ? entidadEmisor.logo : LOGOS_PATH + "naranja-x.png");
+
+    // Destinatario Preview
+    $("previewDestNombre").textContent = destNombre || "Destinatario";
+    $("previewDestCbu").textContent = destCbu || "—";
+    $("previewDestCuil").textContent = destCuil || "—";
+    $("previewDestBanco").textContent = entidadDest ? entidadDest.nombre : (destBanco || "Banco");
+    aplicarLogo($("previewDestLogo"), entidadDest ? entidadDest.logo : "");
+
+    // Monto
+    const montos = formatearMontoDividido($("monto").value);
+    $("previewMontoEntero").textContent = montos.entero;
+    $("previewMontoDecimal").textContent = montos.decimal;
+
+    // Fecha
+    $("previewFechaHora").textContent = fechaHoraStr;
+
+    // Concepto
+    const concepto = $("concepto").value.trim();
+    $("previewConcepto").textContent = concepto || "Sin concepto";
+    $("previewConceptoContainer").style.display = concepto ? "block" : "none";
+}
+
+function actualizarReloj(){
+    const f = obtenerFechaArgentina();
+    $("liveTime").textContent = `Hora de Argentina: ${f.day}/${f.month}/${f.year} ${f.hour}:${f.minute}`;
+}
+setInterval(actualizarReloj, 1000);
+actualizarReloj();
+
+async function descargarPNG(){
+    generarComprobante();
+    const elemento = $("comprobante");
+    const canvas = await html2canvas(elemento, { scale: 3, backgroundColor: "#f5f6f8", useCORS: true });
+    const dataUrl = canvas.toDataURL("image/png");
+    
+    // Si el navegador soporta Web Share API (muy común en móviles como Android / iOS Safari), 
+    // pedirá permiso para compartir/guardar directamente en Fotos o galería.
+    if(navigator.canShare && navigator.share){
+        canvas.toBlob(async (blob) => {
+            const file = new File([blob], "comprobante-naranja-x.png", { type: "image/png" });
+            try {
+                await navigator.share({
+                    files: [file],
+                    title: 'Comprobante',
+                    text: 'Comprobante de transferencia Naranja X'
+                });
+                return;
+            } catch(e){
+                // Si el usuario cancela o no está permitido, recurrimos a descarga directa estándar abajo
+            }
+        });
+    }
+
+    // Descarga directa clásica (funciona en PC y móviles)
+    const enlace = document.createElement("a");
+    enlace.download = "comprobante-naranja-x-" + Date.now() + ".png";
+    enlace.href = dataUrl;
+    enlace.click();
+}
+
+async function descargarPDF(){
+    generarComprobante();
+    const elemento = $("comprobante");
+    const canvas = await html2canvas(elemento, { scale: 3, backgroundColor: "#f5f6f8", useCORS: true });
+    const imagen = canvas.toDataURL("image/png");
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+    const ancho = 90;
+    const alto = (canvas.height * ancho) / canvas.width;
+    const x = (210 - ancho) / 2;
+    pdf.addImage(imagen, "PNG", x, 15, ancho, alto);
+    pdf.save("comprobante-" + Date.now() + ".pdf");
+}
+
+function limpiarFormulario(){
+    ["emisorNombre","emisorCuil","emisorBanco","emisorCbu","destNombre","destCuil","destBanco","destCbu","monto","concepto"].forEach(id => {
+        $(id).value = "";
+    });
+    generarComprobante();
+}
+
+["emisorNombre","emisorCuil","emisorBanco","emisorCbu","destNombre","destCuil","destBanco","destCbu","monto","concepto","tipoOperacion","estado"].forEach(id => {
+    $(id).addEventListener("input", () => {
+        if(id === "emisorBanco") actualizarEntidadVisual("emisor");
+        else if(id === "destBanco") actualizarEntidadVisual("destinatario");
+        else generarComprobante();
+    });
+});
+
+generarComprobante();
+</script>
+</body>
+</html>
